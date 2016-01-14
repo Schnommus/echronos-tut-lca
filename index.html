@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>eChronos & lwIP: Toward high-assurance IoT</title>
+
+        <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+        <meta name="author" content="Seb Holzapfel">
+
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/night.css" id="theme">
+
+        <!-- Code syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+
+        <!--[if lt IE 9]>
+            <script src="lib/js/html5shiv.js"></script>
+            <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <small>eChronos & lwIP: Toward high assurance IoT</small>
+
+                <section>
+                    <h1>eChronos & lwIP</h1>
+                    <h3>Toward high assurance IoT</h3>
+                    <p><br>
+                    <small>Seb Holzapfel - <a href="http://sebholzapfel.com">sebholzapfel.com</a></small>
+                    </p>
+                </section>
+
+                <section>
+                    <h3>Going to talk about...</h3>
+                    <ul>
+                        <li><b>eChronos RTOS:</b> What is it? Why is it useful? What do I mean by high-assurance?</li>
+                        <li><b>lwIP:</b> When do I need a TCP/IP stack?  What are they useful for? How do I port a TCP/IP stack to eChronos or my RTOS?</li>
+                        <li><b>Hardware demos:</b> How do I get this running on hardware? What are these systems useful for? (spoiler: anything IoT)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>What is an RTOS?</h3>
+                    <b>Real Time Operating System</b><br>
+                    Low-overhead OS, makes guarantees about execution time. Often intended for embedded use. May have heard of...
+                    <br>
+                    <ul>
+                        <li>FreeRTOS (very common)</li>
+                        <li>Simba OS (arduino)</li>
+                    </ul>
+                    <br>
+                    <br>
+                    <b>Useful when</b> <br>
+                    Writing firmware that could benefit from primitives like threads, mutexes, signals etc.
+                </section>
+
+                <section>
+                    <h3>Why is eChronos interesting?</h3>
+                    <b>Open-source</b> <br>
+                    eChronos is under AGPLv3 - <a href="https://github.com/echronos/echronos">github.com/echronos</a><br>
+                    <br>
+                    <b>High-assurance</b> <br>
+                    The RTOS is mathematically proven to be bug-free* <br>
+                    <br>
+                    <b>Miniscule overhead</b> <br>
+                    Component-based construction means that the overhead of using this RTOS is kept at a minimum. How? 2 stages.<br>
+                    <br>
+                    <small>*bug-free == adheres to our specification without unintended side-effects</small>
+                </section>
+
+                <section>
+                    <h3>1. Constructing a minimal OS</h3>
+                    <ul>
+                        <li>Only include the features you <b>need</b> <br></li>
+                        <li>The RTOS has 7 different OS <em>variants</em>. <br></li>
+                    </ul>
+                    <br>
+                    <br>
+                    What is a variant? From the source of <code>x.py</code>:
+                    <pre><code class="hlpython" style="word-wrap: break-word;">
+'acrux': [Component('stack', pkg_component=True),
+          Component('context-switch', pkg_component=True),
+          Component('sched-rr', {'assume_runnable': False}),
+          Component('interrupt-event', {'timer_process': False}),
+          Component('simple-mutex'),
+          Component('error'),
+          Component('task'),
+          ...
+          ]
+                    </code></pre>
+                    Normally, you don't need to create your own. <br>
+                    What about the OS documentation? <em>It's generated, too!</em>
+                </section>
+
+                <section>
+                    <h3>2. Project files (<code>.prx</code>)</h3>
+                    Declare how your firmware will be structured. Example: <br>
+                    <pre><code class="hlxml" style="word-wrap: break-word;">
+&lt;system&gt;
+    &lt;modules&gt;
+        &lt;module name="tiva_lwip.http_server" /&gt;
+
+        &lt;module name="tiva_lwip.armv7m.vectable"&gt;
+            &lt;flash_load_addr&gt;0x0000000&lt;/flash_load_addr&gt;
+            &lt;preemption&gt;true&lt;/preemption&gt;
+            ...
+            &lt;external_irqs&gt;
+                &lt;external_irq&gt;
+                    &lt;number&gt;40&lt;/number&gt;
+                    &lt;handler&gt;lwIPEthernetIntHandler&lt;/handler&gt;
+                &lt;/external_irq&gt;
+                ...
+            &lt;/external_irqs&gt;
+        &lt;/module&gt;
+
+        &lt;module name="tiva_lwip.armv7m.rtos-kochab"&gt;
+            ...
+            &lt;tasks&gt;
+                &lt;task&gt;
+                    &lt;name&gt;ethernet_interrupt_task&lt;/name&gt;
+                    &lt;function&gt;ethernet_interrupt_task&lt;/function&gt;
+                    &lt;priority&gt;14&lt;/priority&gt;
+                    &lt;stack_size&gt;8192&lt;/stack_size&gt;
+                &lt;/task&gt;
+                ...
+            &lt;/tasks&gt;
+
+            &lt;semaphores&gt;
+                &lt;semaphore&gt;
+                    &lt;name&gt;lwip_aux_sem_1&lt;/name&gt;
+                &lt;/semaphore&gt;
+            &lt;/semaphores&gt;
+            ...
+                    </code></pre>
+
+                </section>
+
+                <section>
+                    <h3>Why static?</h3>
+                    <ul>
+                        <li><b>Optimize the OS implementation:</b> makes it possible to perform extreme space-saving optimizations - for example, bitpacking the task ID field to 2 bits if there are only 3 tasks.</li>
+                        <li><b>Easier to find bugs in:</b> Code analysis tools find bugs in user-level code much easier. NASA's programming guidelines...</li>
+                        <br>
+                        <br>
+                        <small>Interested in learning how to use eChronos? Tutorial running on Thursday at 9:00 in placeholder room. There's also a quickstart guide in the github repository.</small>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Hardware Shopping</h3>
+                    TI Connected Launchpad: TM4C1294X with an <b>ARM Cortex M4</b> core
+                    <img width="600" data-src="images/tm4c1294_board.jpg"> <br>
+                    Ethernet controller, butloads of IO, PWM, UART, ICDI etc. ~$30 <br>
+                    <small>Why? Relatively easy to use, inexpensive.</small>
+                </section>
+
+                <section>
+                    <h3>OS & Hardware - What else?</h3>
+                    <ul>
+                        <li>Hardware has an ethernet controller</li>
+                        <li>OS runs our code</li>
+                    </ul> <br>
+                    <br>
+                    But, we need a way to operate the ethernet controller so that we can communicate with a network - a <b>TCP/IP stack</b>. <br>
+                    <br>
+                    <h3>Answer? lwIP</h3>
+                </section>
+
+                <section>
+                    <h3>lwIP</h3>
+                    <ul>
+                        <li><em>Lightweight IP</em></li>
+                        <li>Open-source TCP/IP stack, BSD license</li>
+                        <li>Written in C</li>
+                        <li>Tiny, easily deals with <b>&lt; 20kB of RAM</b></li>
+                    </ul> <br>
+                    <br>
+                    Allows you to perform high-level TCP/IP operations like HTTP requests, listening to ports, responding to pings (implicit!).
+                </section>
+
+                <section>
+                    <h3>Nice, but how do I use it on my plaform?</h3>
+                    Huge amount of existing ports; there is a good chance one already exists<br>
+                    <br>
+                    <b>Porting lwIP involves:</b>
+                    <ul>
+                        <li>Implementing the physical hardware interface</li>
+                        <li>Implementing any syscalls that lwIP needs (RTOS dependent!)</li>
+                    </ul> <br>
+                    <br>
+                    Both are just a set of stub .h and .c files. Not as hard as it sounds.
+                </section>
+                <!-- One slide on PHY, one slide on syscalls -->
+                <section>
+                    <h3>eChronos makes this interesting</h3>
+                    In exchange for eChronos' high-assurance, we <b>lose dynamic allocation of OS primitives</b>. This means we can't just pull a new task out of thin air, for example.<br>
+                    <br>
+                    However, lwIP requires this! What do we do? <br>
+                    <br>
+                    <em>Answer: Cheat</em>
+                </section>
+
+                <!-- Example of nested vertical slides -->
+                <section>
+                    <section>
+                        <h2>Vertical Slides</h2>
+                        <p>Slides can be nested inside of each other.</p>
+                        <p>Use the <em>Space</em> key to navigate through all slides.</p>
+                        <br>
+                        <a href="#" class="navigate-down">
+                            <img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
+                        </a>
+                    </section>
+                    <section>
+                        <h2>Basement Level 1</h2>
+                        <p>Nested slides are useful for adding additional detail underneath a high level horizontal slide.</p>
+                    </section>
+                    <section>
+                        <h2>Basement Level 2</h2>
+                        <p>That's it, time to go back up.</p>
+                        <br>
+                        <a href="#/2">
+                            <img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="transform: rotate(180deg); -webkit-transform: rotate(180deg);">
+                        </a>
+                    </section>
+                </section>
+
+                <section>
+                    <h2>Slides</h2>
+                    <p>
+                    Not a coder? Not a problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slides.com" target="_blank">http://slides.com</a>.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Point of View</h2>
+                    <p>
+                    Press <strong>ESC</strong> to enter the slide overview.
+                    </p>
+                    <p>
+                    Hold down alt and click on any element to zoom in on it using <a href="http://lab.hakim.se/zoom-js">zoom.js</a>. Alt + click anywhere to zoom back out.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Touch Optimized</h2>
+                    <p>
+                    Presentations look great on touch devices, like mobile phones and tablets. Simply swipe through your slides.
+                    </p>
+                </section>
+
+                <section data-markdown>
+                    <script type="text/template">
+## Markdown support
+
+                        Write content using inline or external Markdown.
+                        Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
+
+                        ```
+                        <section data-markdown>
+                          ## Markdown support
+
+                          Write content using inline or external Markdown.
+                          Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
+                        </section>
+                        ```
+                    </script>
+                </section>
+
+                <section>
+                    <section id="fragments">
+                        <h2>Fragments</h2>
+                        <p>Hit the next arrow...</p>
+                        <p class="fragment">... to step through ...</p>
+                        <p><span class="fragment">... a</span> <span class="fragment">fragmented</span> <span class="fragment">slide.</span></p>
+
+                        <aside class="notes">
+                            This slide has fragments which are also stepped through in the notes window.
+                        </aside>
+                    </section>
+                    <section>
+                        <h2>Fragment Styles</h2>
+                        <p>There's different types of fragments, like:</p>
+                        <p class="fragment grow">grow</p>
+                        <p class="fragment shrink">shrink</p>
+                        <p class="fragment fade-out">fade-out</p>
+                        <p class="fragment current-visible">current-visible</p>
+                        <p class="fragment highlight-red">highlight-red</p>
+                        <p class="fragment highlight-blue">highlight-blue</p>
+                    </section>
+                </section>
+
+                <section id="transitions">
+                    <h2>Transition Styles</h2>
+                    <p>
+                    You can select from different transitions, like: <br>
+                    <a href="?transition=none#/transitions">None</a> -
+                    <a href="?transition=fade#/transitions">Fade</a> -
+                    <a href="?transition=slide#/transitions">Slide</a> -
+                    <a href="?transition=convex#/transitions">Convex</a> -
+                    <a href="?transition=concave#/transitions">Concave</a> -
+                    <a href="?transition=zoom#/transitions">Zoom</a>
+                    </p>
+                </section>
+
+                <section id="themes">
+                    <h2>Themes</h2>
+                    <p>
+                    reveal.js comes with a few themes built in: <br>
+                    <!-- Hacks to swap themes after the page has loaded. Not flexible and only intended for the reveal.js demo deck. -->
+                    <a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/black.css'); return false;">Black (default)</a> -
+                    <a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/white.css'); return false;">White</a> -
+                    <a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/league.css'); return false;">League</a> -
+                    <a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/sky.css'); return false;">Sky</a> -
+                    <a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/beige.css'); return false;">Beige</a> -
+                    <a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/simple.css'); return false;">Simple</a> <br>
+                    <a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/serif.css'); return false;">Serif</a> -
+                    <a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/blood.css'); return false;">Blood</a> -
+                    <a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/night.css'); return false;">Night</a> -
+                    <a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/moon.css'); return false;">Moon</a> -
+                    <a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/solarized.css'); return false;">Solarized</a>
+                    </p>
+                </section>
+
+                <section>
+                    <section data-background="#dddddd">
+                        <h2>Slide Backgrounds</h2>
+                        <p>
+                        Set <code>data-background="#dddddd"</code> on a slide to change the background color. All CSS color formats are supported.
+                        </p>
+                        <a href="#" class="navigate-down">
+                            <img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
+                        </a>
+                    </section>
+                    <section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png">
+                        <h2>Image Backgrounds</h2>
+                        <pre><code class="hljs">&lt;section data-background="image.png"&gt;</code></pre>
+                    </section>
+                    <section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png" data-background-repeat="repeat" data-background-size="100px">
+                        <h2>Tiled Backgrounds</h2>
+                        <pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
+                    </section>
+                    <section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm" data-background-color="#000000">
+                        <div style="background-color: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px;">
+                            <h2>Video Backgrounds</h2>
+                            <pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background-video="video.mp4,video.webm"&gt;</code></pre>
+                        </div>
+                    </section>
+                    <section data-background="http://i.giphy.com/90F8aUepslB84.gif">
+                        <h2>... and GIFs!</h2>
+                    </section>
+                </section>
+
+                <section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
+                    <h2>Background Transitions</h2>
+                    <p>
+                    Different background transitions are available via the backgroundTransition option. This one's called "zoom".
+                    </p>
+                    <pre><code class="hljs">Reveal.configure({ backgroundTransition: 'zoom' })</code></pre>
+                </section>
+
+                <section data-transition="slide" data-background="#b5533c" data-background-transition="zoom">
+                    <h2>Background Transitions</h2>
+                    <p>
+                    You can override background transitions per-slide.
+                    </p>
+                    <pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background-transition="zoom"&gt;</code></pre>
+                </section>
+
+                <section>
+                    <h2>Pretty Code</h2>
+                    <pre><code class="hljs" data-trim contenteditable>
+function linkify( selector ) {
+  if( supports3DTransforms ) {
+
+    var nodes = document.querySelectorAll( selector );
+
+    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
+      var node = nodes[i];
+
+      if( !node.className ) {
+        node.className += ' roll';
+      }
+    }
+  }
+}
+                    </code></pre>
+                    <p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
+                </section>
+
+                <section>
+                    <h2>Marvelous List</h2>
+                    <ul>
+                        <li>No order here</li>
+                        <li>Or here</li>
+                        <li>Or here</li>
+                        <li>Or here</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Fantastic Ordered List</h2>
+                    <ol>
+                        <li>One is smaller than...</li>
+                        <li>Two is smaller than...</li>
+                        <li>Three!</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h2>Tabular Tables</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Value</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Apples</td>
+                                <td>$1</td>
+                                <td>7</td>
+                            </tr>
+                            <tr>
+                                <td>Lemonade</td>
+                                <td>$2</td>
+                                <td>18</td>
+                            </tr>
+                            <tr>
+                                <td>Bread</td>
+                                <td>$3</td>
+                                <td>2</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section>
+                    <h2>Clever Quotes</h2>
+                    <p>
+                    These guys come in two forms, inline: <q cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
+                        &ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
+                    </p>
+                    <blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
+                        &ldquo;For years there has been a theory that millions of monkeys typing at random on millions of typewriters would
+                        reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
+                    </blockquote>
+                </section>
+
+                <section>
+                    <h2>Intergalactic Interconnections</h2>
+                    <p>
+                    You can link between slides internally,
+                    <a href="#/2/3">like this</a>.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Speaker View</h2>
+                    <p>There's a <a href="https://github.com/hakimel/reveal.js#speaker-notes">speaker view</a>. It includes a timer, preview of the upcoming slide as well as your speaker notes.</p>
+                    <p>Press the <em>S</em> key to try it out.</p>
+
+                    <aside class="notes">
+                        Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>Export to PDF</h2>
+                    <p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, here's an example:</p>
+                    <iframe src="https://www.slideshare.net/slideshow/embed_code/42840540" width="445" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:3px solid #666; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+                </section>
+
+                <section>
+                    <h2>Global State</h2>
+                    <p>
+                    Set <code>data-state="something"</code> on a slide and <code>"something"</code>
+                    will be added as a class to the document element when the slide is open. This lets you
+                    apply broader style changes, like switching the page background.
+                    </p>
+                </section>
+
+                <section data-state="customevent">
+                    <h2>State Events</h2>
+                    <p>
+                    Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
+                    </p>
+                    <pre><code class="javascript" data-trim contenteditable style="font-size: 18px;">
+Reveal.addEventListener( 'customevent', function() {
+    console.log( '"customevent" has fired' );
+} );
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Take a Moment</h2>
+                    <p>
+                    Press B or . on your keyboard to pause the presentation. This is helpful when you're on stage and want to take distracting slides off the screen.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Much more</h2>
+                    <ul>
+                        <li>Right-to-left support</li>
+                        <li><a href="https://github.com/hakimel/reveal.js#api">Extensive JavaScript API</a></li>
+                        <li><a href="https://github.com/hakimel/reveal.js#auto-sliding">Auto-progression</a></li>
+                        <li><a href="https://github.com/hakimel/reveal.js#parallax-background">Parallax backgrounds</a></li>
+                        <li><a href="https://github.com/hakimel/reveal.js#keyboard-bindings">Custom keyboard bindings</a></li>
+                    </ul>
+                </section>
+
+                <section style="text-align: left;">
+                    <h1>THE END</h1>
+                    <p>
+                    - <a href="http://slides.com">Try the online editor</a> <br>
+                    - <a href="https://github.com/hakimel/reveal.js">Source code &amp; documentation</a>
+                    </p>
+                </section>
+
+            </div>
+
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+        <script>
+
+// Full list of configuration options available at:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+
+    transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+    dependencies: [
+    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+        { src: 'plugin/zoom-js/zoom.js', async: true },
+            { src: 'plugin/notes/notes.js', async: true }
+    ]
+});
+
+        </script>
+
+    </body>
+</html>
