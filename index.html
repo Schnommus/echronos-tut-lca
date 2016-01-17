@@ -182,7 +182,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <h3>Hardware Shopping</h3>
                     TI Connected Launchpad: TM4C1294X with an <b>ARM Cortex M4</b> core
                     <img width="600" data-src="images/tm4c1294_board.jpg"> <br>
-                    Ethernet controller, butloads of IO, PWM, UART, ICDI etc. ~$30 <br>
+                    Ethernet controller, butt-loads of IO, PWM, UART, ICDI etc. ~$30 <br>
                     <small>Why? Relatively easy to use, inexpensive.</small>
 
                     <aside class="notes">
@@ -260,12 +260,12 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 </section>
 
                 <section>
-                    <h3>1. Find cases in lwIP where dynamic allocation is unnecessary</h3>
-                    For example, a task may exist for the entirety of the program lifecycle without a chance of being deleted or reallocated. Similar scenario with other primitives. <br>
+                    <h3>1. Remove dynamic allocation</h3>
+                    A task may exist for the program lifecycle without a chance of being deleted or reallocated. Similar scenario with other primitives. <br>
                     <br>
                     <ul>
-                        <li>This means it's possible for these elements to be static. So,</li>
-                        <li>We can remove the dynamic allocation, and add the element to our <code>.prx</code> file</li>
+                        <li>Means it's possible for these elements to be static. So,</li>
+                        <li>Remove the dynamic allocation, add the element to our <code>.prx</code> file</li>
                     </ul> <br>
                     <br>
                     <small>E.g. master TCP thread, ethernet signal response thread, TCP usage lock</small>
@@ -278,16 +278,21 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 </section>
 
                 <section>
-                    <h3>2. Feign a memory manager & benchmark</h3>
-                    With anything left, the only solution was to<br>
+                    <h3>2. Feign a memory manager</h3>
+                    With anything else, the solution is to<br>
                     <br>
                     <ul>
-                        <li>Allocate a bunch of 'dummy' primitives statically (in <code>.prx</code>)</li>
-                        <li>Write a 'resource manager' for dealing with usage of these finite static resources</li>
+                        <li>Allocate <em>dummy</em> primitives statically (in <code>.prx</code>)</li>
+                        <li>Write a <em>manager</em> for dealing with usage of these static resources</li>
                         <li>Put a hard upper bound on the number of these primitives.</li>
-                        <li>Do traffic benchmarks and make sure we never hit the upper bound. (otherwise bad things will happen!)</li>
-
                     </ul> <br>
+                    <br>
+                    Then...<br>
+                    <br>
+                    <ul>
+                        <li>Do traffic benchmarks, ensure we never hit the upper bound.</li>
+                    </ul>
+                    <small><br>Otherwise bad things will happen!</small>
                     <aside class="notes">
                         Illustrate that a 'resource manager' in this case is simply an array full of pointers with an accompanying 'dirty' flag.
                         Only 4 of each resource was required to be stable!
