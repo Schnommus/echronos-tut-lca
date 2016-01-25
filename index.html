@@ -93,6 +93,18 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 </section>
 
                 <section>
+                    <h3>Hardware Shopping</h3>
+                    TI Connected Launchpad: TM4C1294X with an <b>ARM Cortex M4</b> core
+                    <img width="600" data-src="images/tm4c1294_board.jpg"> <br>
+                    Ethernet controller, butt-loads of IO, PWM, UART, ICDI etc. ~$30 <br>
+                    <small>Why? Relatively easy to use, inexpensive.</small>
+
+                    <aside class="notes">
+                        Mention the open-source gcc toolchain & openOCD, both available in most linux distro package libraries.
+                    </aside>
+                </section>
+
+                <section>
                     <h3>What is an RTOS?</h3>
                     <div class="fragment">
                         <b>Real Time Operating System</b><br>
@@ -275,39 +287,33 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 </section>
 
                 <section>
-                    <h3>Hardware Shopping</h3>
-                    TI Connected Launchpad: TM4C1294X with an <b>ARM Cortex M4</b> core
-                    <img width="600" data-src="images/tm4c1294_board.jpg"> <br>
-                    Ethernet controller, butt-loads of IO, PWM, UART, ICDI etc. ~$30 <br>
-                    <small>Why? Relatively easy to use, inexpensive.</small>
-
-                    <aside class="notes">
-                        Mention the open-source gcc toolchain & openOCD, both available in most linux distro package libraries.
-                    </aside>
-                </section>
-
-                <section>
                     <h3>OS & Hardware - What else?</h3>
-                    <ul>
-                        <li>Hardware has an ethernet controller</li>
-                        <li>OS runs our code</li>
-                    </ul> <br>
+                    <div class="fragment">
+                        <ul>
+                            <li>Hardware has an ethernet controller</li>
+                            <li>OS runs our code</li>
+                        </ul> <br>
+                    </div>
+                    <div class="fragment">
+                        <br>
+                        But, we need a way to operate the ethernet controller so that we can communicate with a network - a <b>TCP/IP stack</b>. <br>
+                    </div>
                     <br>
-                    But, we need a way to operate the ethernet controller so that we can communicate with a network - a <b>TCP/IP stack</b>. <br>
-                    <br>
-                    <h3>Answer? lwIP</h3>
+                    <h3 class="fragment">Answer? lwIP</h3>
                 </section>
 
                 <section>
                     <h3>lwIP</h3>
                     <ul>
-                        <li><em>Lightweight IP</em></li>
-                        <li>Open-source TCP/IP stack, BSD license</li>
-                        <li>Written in C</li>
-                        <li>Tiny, easily deals with <b>&lt; 20kB of RAM</b></li>
+                        <li class="fragment"><em>Lightweight IP</em></li>
+                        <li class="fragment">Open-source TCP/IP stack, BSD license</li>
+                        <li class="fragment">Written in C</li>
+                        <li class="fragment">Tiny, easily deals with <b>&lt; 20kB of RAM</b></li>
                     </ul> <br>
                     <br>
-                    Allows you to perform high-level TCP/IP operations like HTTP requests, listening to ports, responding to pings (implicit!).
+                    <div class="fragment">
+                        Allows you to perform high-level TCP/IP operations like HTTP requests, listening to ports, responding to pings (implicit!).
+                    </div>
 
                     <aside class="notes">
                         High-level in this context means that lwIP performs a *lot* of handshaking and processing behind the scenes.
@@ -316,15 +322,15 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
                 <section>
                     <h3>Nice, but how do I use it on my plaform?</h3>
-                    Huge amount of existing ports; there is a good chance one already exists<br>
+                    <p class="fragment">Huge amount of existing ports; there is a good chance one already exists<br></p>
                     <br>
-                    <b>Porting lwIP involves:</b>
+                    <p class="fragment"><b>Porting lwIP involves:</b></p>
                     <ul>
-                        <li>Implementing the physical hardware interface</li>
-                        <li>Implementing any syscalls that lwIP needs (RTOS dependent!)</li>
+                        <li class="fragment">Implementing the physical hardware interface</li>
+                        <li class="fragment">Implementing any syscalls that lwIP needs (RTOS dependent!)</li>
                     </ul> <br>
                     <br>
-                    Both are just a set of stub <code>.h</code> and <code>.c</code> files. <br>
+                    <p class="fragment">Both are just a set of stub <code>.h</code> and <code>.c</code> files. <br></p>
 
                     <aside class="notes">
                         Going to focus on syscalls, as having to implement your own PHY is rare
@@ -334,12 +340,12 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 <section>
                     <h3>Syscalls: Some of what lwIP needs:</h3>
                     <ul>
-                        <li><b>Threads:</b> <code>sys_arch_thread, <a>sys_arch_thread_new</a>, ... </code></li>
-                        <li><b>Message Queues:</b> <code><a>sys_mbox_new</a>, sys_mbox_post, sys_arch_mbox_fetch, ...</code></li>
-                        <li><b>Semaphores:</b> <code><a>sys_sem_new</a>, sys_sem_post, ...</code></li>
+                        <li class="fragment" data-fragment-index="1"><b>Threads:</b> <code>sys_arch_thread, <a>sys_arch_thread_new</a>, ... </code></li>
+                        <li class="fragment"><b>Message Queues:</b> <code><a>sys_mbox_new</a>, sys_mbox_post, sys_arch_mbox_fetch, ...</code></li>
+                        <li class="fragment"><b>Semaphores:</b> <code><a>sys_sem_new</a>, sys_sem_post, ...</code></li>
                     </ul> <br>
                     <br>
-                    <small><a>orange</a> == requires dynamic allocation</small>
+                    <small class="fragment" data-fragment-index="1"><a>orange</a> == requires dynamic allocation</small>
 
                     <aside class="notes">
                         Perhaps briefly mention message queue hacking that was required.
@@ -348,25 +354,29 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
                 <section>
                     <h3>eChronos makes this interesting</h3>
-                    In exchange for eChronos' high-assurance, we <b>lose dynamic allocation of OS primitives</b>. This means we can't just pull a new task out of thin air, for example.<br>
+                    <p class="fragment">In exchange for eChronos' high-assurance, we <b>lose dynamic allocation of OS primitives</b>. This means we can't just pull a new task out of thin air, for example.<br></p>
                     <br>
-                    However, lwIP requires this! What do we do? <br>
-                    <br>
-                    <em>Answer: Cheat</em>
+                    <div class="fragment">
+                        However, lwIP requires this! What do we do? <br>
+                        <br>
+                        <em>Answer: Cheat</em>
+                    </div>
                 </section>
 
                 <section>
                     <h3>1. Remove dynamic allocation</h3>
+                    <p class="fragment">
                     A task may exist for the program lifecycle without a chance of being deleted or reallocated. Similar scenario with other primitives. <br>
+                    </p>
                     <br>
                     <ul>
-                        <li>Means it's possible for these elements to be static. So,</li>
-                        <li>Remove the dynamic allocation, add the element to our <code>.prx</code> file</li>
+                        <li class="fragment">Means it's possible for these elements to be static. So,</li>
+                        <li class="fragment">Remove the dynamic allocation, add the element to our <code>.prx</code> file</li>
                     </ul> <br>
                     <br>
-                    <small>E.g. master TCP thread, ethernet signal response thread, TCP usage lock</small>
+                    <small class="fragment">E.g. master TCP thread, ethernet signal response thread, TCP usage lock</small>
                     <br>
-                    However, not every primitive is used like this!
+                    <p class="fragment">However, not every primitive is used like this!</p>
 
                     <aside class="notes">
                         Surprisingly, it was possible to remove every dynamically allocated thread from lwIP, all threads are now static.
@@ -375,20 +385,22 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
                 <section>
                     <h3>2. Feign a memory manager</h3>
-                    With anything else, the solution is to<br>
+                    <p class="fragment">With anything else, the solution is to<br></p>
                     <br>
                     <ul>
-                        <li>Allocate <em>dummy</em> primitives statically (in <code>.prx</code>)</li>
-                        <li>Write a <em>manager</em> for dealing with usage of these static resources</li>
-                        <li>Put a hard upper bound on the number of these primitives.</li>
+                        <li class="fragment">Allocate <em>dummy</em> primitives statically (in <code>.prx</code>)</li>
+                        <li class="fragment">Write a <em>manager</em> for dealing with usage of these static resources</li>
+                        <li class="fragment">Put a hard upper bound on the number of these primitives.</li>
                     </ul> <br>
                     <br>
-                    Then...<br>
-                    <br>
-                    <ul>
-                        <li>Do traffic benchmarks, ensure we never hit the upper bound.</li>
-                    </ul>
-                    <small><br>Otherwise bad things will happen!</small>
+                    <div class="fragment">
+                        Then...<br>
+                        <br>
+                        <ul>
+                            <li>Do traffic benchmarks, ensure we never hit the upper bound.</li>
+                        </ul>
+                    </div>
+                    <small class="fragment"><br>Otherwise bad things will happen!</small>
                     <aside class="notes">
                         Illustrate that a 'resource manager' in this case is simply an array full of pointers with an accompanying 'dirty' flag.
                         Only 4 of each resource was required to be stable!
