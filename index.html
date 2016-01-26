@@ -66,6 +66,26 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 </section>
 
                 <section>
+                    <h3>Bio</h3>
+                    <p>
+                    <ul>
+                        <li class="fragment" data-fragment-index="1">Hobbyist - <a href="http://sebholzapfel.com">sebholzapfel.com</a></li>
+                        <li class="fragment" data-fragment-index="2">Prototyping business</li>
+                        <li class="fragment" data-fragment-index="3">Radio/Radar techie</li>
+                        <li class="fragment" data-fragment-index="4">PCB design business</li>
+                        <li class="fragment" data-fragment-index="5">CSIRO Data61 (OS Research, eChronos)</li>
+                    </ul>
+                    <br>
+                    <img width="170" data-src="images/hobby.png" class="fragment" data-fragment-index="1">
+                    <img width="170" data-src="images/embedded.png" class="fragment" data-fragment-index="2">
+                    <img width="170" data-src="images/vor.png" class="fragment" data-fragment-index="3">
+                    <img width="170" data-src="images/radar.png" class="fragment" data-fragment-index="3">
+                    <img width="170" data-src="images/pcb.png" class="fragment" data-fragment-index="4">
+                    <img width="170" data-src="images/data61_csiro.png" class="fragment" style="border:0; background:none;" data-fragment-index="5">
+                    </p>
+                </section>
+
+                <section>
                     <div id="wrap">
                         <div id="left_col">
                             <img width="500" data-src="images/echronos-lwip-graphic_01.png" style="border:0; background:none;" class="fragment" data-fragment-index="2">
@@ -94,10 +114,12 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
                 <section>
                     <h3>Hardware Shopping</h3>
-                    TI Connected Launchpad: TM4C1294X with an <b>ARM Cortex M4</b> core
-                    <img width="600" data-src="images/tm4c1294_board.jpg"> <br>
-                    Ethernet controller, butt-loads of IO, PWM, UART, ICDI etc. ~$30 <br>
-                    <small>Why? Relatively easy to use, inexpensive.</small>
+                    <div class="fragment">Ethernet controller, butt-loads of IO, PWM, UART, ICDI etc. ~$30 <br></div>
+                    <div class="fragment">
+                        <img width="600" data-src="images/tm4c1294_board.jpg"> <br>
+                        TI Connected Launchpad: TM4C1294X with an <b>ARM Cortex M4</b> core
+                        <small>Why? Relatively easy to use, inexpensive.</small>
+                    </div>
 
                     <aside class="notes">
                         Mention the open-source gcc toolchain & openOCD, both available in most linux distro package libraries.
