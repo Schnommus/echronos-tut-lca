@@ -162,7 +162,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <br>
                     <div class="fragment" data-fragment-index="2">
                         <b>High-assurance</b> <br>
-                        The RTOS is mathematically proven to be bug-free* <br>
+                        A model of the RTOS' architecture is being mathematically verified*<br>
                     </div>
                     <br>
                     <div class="fragment" data-fragment-index="3">
@@ -170,7 +170,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                         Component-based construction means that the overhead of using this RTOS is kept at a minimum. How? 2 stages.<br>
                     </div>
                     <br>
-                    <small class="fragment" data-fragment-index="2">*bug-free == adheres to our specification without unintended side-effects</small>
+                    <small class="fragment" data-fragment-index="2">*model-checking for adherence to our specification without unintended side-effects (abstract, not code-level). 'Progress' proofs would be even nicer, perhaps a future project</small>
                 </section>
 
                 <section>
@@ -295,8 +295,8 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <h3>Get to the point!</h3>
                     <p class="fragment">8 bits, so 2 lowest-priority interrupts are 254 and 255, right?<br></p>
                     <p class="fragment">But the RTOS crashes! <em>Only</em> on hardware.<br></p>
-                    <img class="fragment" width="300" data-src="images/stm_pri.png">
-                    <img class="fragment" width="700" data-src="images/ti_pri.png">
+                    <img class="fragment" width="500" data-src="images/stm_pri.png">
+                    <img class="fragment" width="900" data-src="images/ti_pri.png">
                     <ul>
                         <li class="fragment"><b>Problem:</b> <code>254==255</code> in 3/4 bit system, so crashes! </li>
                         <li class="fragment"><b>Solution:</b> Choose distinct priorities irrespective of lower order bits</li>
