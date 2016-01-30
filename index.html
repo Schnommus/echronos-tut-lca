@@ -55,17 +55,25 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
             <!-- Any section element inside of this container is displayed as a slide -->
             <div class="slides">
-                <small>eChronos & lwIP: Toward high assurance IoT</small>
-
-                <section>
-                    <h1>eChronos & lwIP</h1>
-                    <h3>Toward high assurance IoT</h3>
-                    <p><br>
-                    <small>Seb Holzapfel - <a href="http://sebholzapfel.com">sebholzapfel.com</a></small>
-                    </p>
+                <section data-background="images/background1.jpg"> <div id="wrap">
+                        <div id="left_col">
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <h2>eChronos & lwIP</h2>
+                            <h4>Toward high assurance IoT</h4>
+                            <small>Seb Holzapfel - <a href="http://sebholzapfel.com">sebholzapfel.com</a></small>
+                        </div>
+                        <div id="right_col">
+                        </div>
+                    </div>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>Bio</h3>
                     <p>
                     <ul>
@@ -87,7 +95,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </p>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <div id="wrap">
                         <div id="left_col">
                             <img width="500" data-src="images/echronos-lwip-graphic_01.png" style="border:0; background:none;" class="fragment" data-fragment-index="2">
@@ -103,7 +111,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>Going to talk about...</h3>
                     <ul>
                         <li class="fragment"><b>eChronos RTOS:</b> What is it? Why is it useful? What do I mean by high-assurance?</li>
@@ -114,7 +122,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <b class="fragment">Interspersed... porting tricks & traps</b>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>Hardware Shopping</h3>
                     <div class="fragment">Ethernet controller, butt-loads of IO, PWM, UART, ICDI etc. ~$30 <br></div>
                     <div class="fragment">
@@ -128,7 +136,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>What is an RTOS?</h3>
                     <div class="fragment">
                         <b>Real Time Operating System</b><br>
@@ -153,7 +161,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>Why is eChronos interesting?</h3>
                     <div class="fragment" data-fragment-index="1">
                         <b>Open-source</b> <br>
@@ -173,7 +181,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <small class="fragment" data-fragment-index="2">*model-checking for adherence to our specification without unintended side-effects (abstract, not code-level). 'Progress' proofs would be even nicer, perhaps a future project</small>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>1. Constructing a minimal OS</h3>
                     <ul>
                         <li class="fragment">Only include the features you <b>need</b> <br></li>
@@ -197,7 +205,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <div class="fragment">What about the OS documentation? <em>It's generated, too!</em></div>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>2. Project files (<code>.prx</code>)</h3>
                     <div class="fragment">
                         Declare how your firmware will be structured. Example: <br>
@@ -246,7 +254,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>Why static?</h3>
                     <ul>
                         <li class="fragment"><b>Optimize the OS implementation:</b> makes it possible to perform extreme space-saving optimizations - for example, bitpacking the task ID field to 2 bits if there are only 3 tasks.</li>
@@ -261,7 +269,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>Trap: interrupt priority resolution</h3>
                     <img class="fragment" data-fragment-index="1" width="400" data-src="images/non-preemptive-graphic.png" style="border:0; background:none;">
                     <img class="fragment" data-fragment-index="2" width="400" data-src="images/preemptive_graphic.png" style="border:0; background:none;">
@@ -277,7 +285,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>A closer look</h3>
                     <ul>
                         <li class="fragment" data-fragment-index="1">Most RTOS's <em>internally</em> use the system's <code>pendsv</code> and <code>svc</code> ISRs to facilitate preemption.</li>
@@ -291,7 +299,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <img class="fragment" data-fragment-index="5" width="800" data-src="images/cortex_manual.png">
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>Get to the point!</h3>
                     <p class="fragment">8 bits, so 2 lowest-priority interrupts are 254 and 255, right?<br></p>
                     <p class="fragment">But the RTOS crashes! <em>Only</em> on hardware.<br></p>
@@ -311,7 +319,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>OS & Hardware - What else?</h3>
                     <div class="fragment">
                         <ul>
@@ -327,7 +335,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <h3 class="fragment">Answer? lwIP</h3>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>lwIP</h3>
                     <ul>
                         <li class="fragment"><em>Lightweight IP</em></li>
@@ -345,7 +353,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>Nice, but how do I use it on my plaform?</h3>
                     <p class="fragment">Huge amount of existing ports; there is a good chance one already exists<br></p>
                     <br>
@@ -362,7 +370,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>Syscalls: Some of what lwIP needs:</h3>
                     <ul>
                         <li class="fragment" data-fragment-index="1"><b>Threads:</b> <code>sys_arch_thread, <a>sys_arch_thread_new</a>, ... </code></li>
@@ -377,7 +385,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>eChronos makes this interesting</h3>
                     <p class="fragment">In exchange for eChronos' high-assurance, we <b>lose dynamic allocation of OS primitives</b>. This means we can't just pull a new task out of thin air, for example.<br></p>
                     <br>
@@ -388,7 +396,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </div>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>1. Remove dynamic allocation</h3>
                     <p class="fragment">
                     A task may exist for the program lifecycle without a chance of being deleted or reallocated. Similar scenario with other primitives. <br>
@@ -408,7 +416,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h3>2. Feign a memory manager</h3>
                     <p class="fragment">With anything else, the solution is to<br></p>
                     <br>
@@ -432,18 +440,18 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h1>Hardware Demos</h1>
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <img width="300" data-src="images/geiger_demo.jpg" class="fragment" data-fragment-index="1">&nbsp;&nbsp;&nbsp;
                     <img width="500" data-src="images/regression_server.jpg" class="fragment" data-fragment-index="2">&nbsp;&nbsp;&nbsp;
                     <img width="500" data-src="images/light_kitchen.jpg" class="fragment" data-fragment-index="3">&nbsp;&nbsp;&nbsp;
                     <img width="300" data-src="images/light_hardware.jpg" class="fragment" data-fragment-index="3">&nbsp;&nbsp;&nbsp;
                 </section>
 
-                <section>
+                <section data-background="images/background2.jpg">
                     <h4>Source code: <a>github.com/Schnommus/echronos-lwip</a></h4>
                     <h4>eChronos: <a>github.com/echronos/echronos</a></h4>
                     <h4>Slides (Live): <a>sebholzapfel.com/static/echronos-lwip-slides</a></h4>
@@ -468,7 +476,7 @@ Reveal.initialize({
     history: true,
     center: true,
 
-    transition: 'slide', // none/fade/slide/convex/concave/zoom
+    transition: 'convex', // none/fade/slide/convex/concave/zoom
 
         // Optional reveal.js plugins
     dependencies: [
