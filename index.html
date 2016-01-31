@@ -88,9 +88,8 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <img width="170" data-src="images/vor.png" class="fragment" data-fragment-index="3">
                     <img width="170" data-src="images/radar.png" class="fragment" data-fragment-index="3">
                     <img width="170" data-src="images/pcb.png" class="fragment" data-fragment-index="4">
-                    <img width="170" data-src="images/data61_csiro.png" class="fragment" style="border:0; background:none;" data-fragment-index="5"> <br>
                         <h4 class="fragment" data-fragment-index="5">tl;dr</h4>
-                        <p class="fragment" data-fragment-index="5">Summer intern @ CSIRO Data61 (OS Research group, eChronos)</p>
+                        <p class="fragment" data-fragment-index="5">Intern @ CSIRO Data61 (OS Research group, eChronos)</p>
                         <p class="fragment" data-fragment-index="5">Entering 2nd year EE @ UNSW</p>
                     </p>
                 </section>
@@ -181,7 +180,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <small class="fragment" data-fragment-index="2">*model-checking for adherence to our specification without unintended side-effects (abstract, not code-level). 'Progress' proofs would be even nicer, perhaps a future project</small>
                 </section>
 
-                <section data-background="images/background2.jpg">
+                <section data-background="images/background2.jpg" data-transition="fade-out">
                     <h3>1. Constructing a minimal OS</h3>
                     <ul>
                         <li class="fragment">Only include the features you <b>need</b> <br></li>
@@ -201,11 +200,21 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
           ...
           ]
                     </code></pre></div>
+
+                </section>
+
+                <section data-background="images/background2.jpg" data-transition="fade-in">
+
+                    <pre><code class="hlpython stretch" style="word-wrap: break-word; font-size: 2.0em; width: 130%; overflow: auto; line-height:1.2em; margin-left:-20%">
+Component('sched-rr', {'assume_runnable': False}),
+Component('simple-mutex'),
+Component('task'),
+                    </code></pre>
                     <div class="fragment">Normally, you don't need to create your own. <br></div>
                     <div class="fragment">What about the OS documentation? <em>It's generated, too!</em></div>
                 </section>
 
-                <section data-background="images/background2.jpg">
+                <section data-background="images/background2.jpg" data-transition="fade-out">
                     <h3>2. Project files (<code>.prx</code>)</h3>
                     <div class="fragment">
                         Declare how your firmware will be structured. Example: <br>
@@ -254,6 +263,26 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     </aside>
                 </section>
 
+                <section data-background="images/background2.jpg" data-transition="fade-in">
+                        <pre><code class="hlxml" style="word-wrap: break-word; font-size: 2.0em; width: 130%; overflow: auto; line-height:1.2em; margin-left:-20%">
+&lt;external_irq&gt;
+    &lt;number&gt;40&lt;/number&gt;
+    &lt;handler&gt;lwIPEthernetIntHandler&lt;/handler&gt;
+&lt;/external_irq&gt;
+...
+&lt;task&gt;
+    &lt;name&gt;ethernet_interrupt_task&lt;/name&gt;
+    &lt;function&gt;ethernet_interrupt_task&lt;/function&gt;
+    &lt;priority&gt;14&lt;/priority&gt;
+    &lt;stack_size&gt;8192&lt;/stack_size&gt;
+&lt;/task&gt;
+...
+&lt;semaphore&gt;
+    &lt;name&gt;lwip_aux_sem_1&lt;/name&gt;
+&lt;/semaphore&gt;
+                        </code></pre>
+                </section>
+
                 <section data-background="images/background2.jpg">
                     <h3>Why static?</h3>
                     <ul>
@@ -288,15 +317,19 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 <section data-background="images/background2.jpg">
                     <h3>A closer look</h3>
                     <ul>
-                        <li class="fragment" data-fragment-index="1">Most RTOS's <em>internally</em> use the system's <code>pendsv</code> and <code>svc</code> ISRs to facilitate preemption.</li>
+                        <li class="fragment" data-fragment-index="1">This RTOS (and some others) <em>internally</em> uses the system's <code>pendsv</code> and <code>svc</code> ISRs to facilitate preemption.</li>
                         <li class="fragment" data-fragment-index="2">It's common to set these 2 interrupts as the 2 lowest-priority interrupts in the system (so they don't mask 'real' interrupts)</li>
                     </ul>
                     <br><br>
                     <h4 class="fragment" data-fragment-index="3">What is a priority?</h4>
                     <small class="fragment" data-fragment-index="4">ARMv7m reference manual</small>
-                    <img class="fragment" data-fragment-index="4" width="800" data-src="images/arm_manual.png">
+                    <blockquote class="fragment" data-fragment-index="4" cite="ARMv7m Reference Manual" style="margin-top:-0.3em">
+                        NVIC Interrupts are prioritized by updating an 8-bit field within a 32-bit register. (Each register supporting 4 interrupts). [...] maintained according to the ARMv7m prioritization scheme
+                    </blockquote>
                     <small class="fragment" data-fragment-index="5">Cortex M4 technical reference manual</small>
-                    <img class="fragment" data-fragment-index="5" width="800" data-src="images/cortex_manual.png">
+                    <blockquote class="fragment" data-fragment-index="5" cite="ARMv7m Reference Manual" style="margin-top:-0.3em">
+                        NVIC registers [...] described in the ARMv7m Architecture Reference Manual
+                    </blockquote>
                 </section>
 
                 <section data-background="images/background2.jpg">
