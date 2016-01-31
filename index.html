@@ -180,7 +180,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <small class="fragment" data-fragment-index="2">*model-checking for adherence to our specification without unintended side-effects (abstract, not code-level). 'Progress' proofs would be even nicer, perhaps a future project</small>
                 </section>
 
-                <section data-background="images/background2.jpg" data-transition="fade-out">
+                <section data-background="images/background2.jpg" data-transition="convex-in fade-out">
                     <h3>1. Constructing a minimal OS</h3>
                     <ul>
                         <li class="fragment">Only include the features you <b>need</b> <br></li>
@@ -203,7 +203,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
                 </section>
 
-                <section data-background="images/background2.jpg" data-transition="fade-in">
+                <section data-background="images/background2.jpg" data-transition="fade-in convex-out">
 
                     <pre><code class="hlpython stretch" style="word-wrap: break-word; font-size: 2.0em; width: 130%; overflow: auto; line-height:1.2em; margin-left:-20%">
 Component('sched-rr', {'assume_runnable': False}),
@@ -214,7 +214,7 @@ Component('task'),
                     <div class="fragment">What about the OS documentation? <em>It's generated, too!</em></div>
                 </section>
 
-                <section data-background="images/background2.jpg" data-transition="fade-out">
+                <section data-background="images/background2.jpg" data-transition="convex-in fade-out">
                     <h3>2. Project files (<code>.prx</code>)</h3>
                     <div class="fragment">
                         Declare how your firmware will be structured. Example: <br>
@@ -263,7 +263,7 @@ Component('task'),
                     </aside>
                 </section>
 
-                <section data-background="images/background2.jpg" data-transition="fade-in">
+                <section data-background="images/background2.jpg" data-transition="fade-in convex-out">
                         <pre><code class="hlxml" style="word-wrap: break-word; font-size: 2.0em; width: 130%; overflow: auto; line-height:1.2em; margin-left:-20%">
 &lt;external_irq&gt;
     &lt;number&gt;40&lt;/number&gt;
@@ -324,7 +324,7 @@ Component('task'),
                     <h4 class="fragment" data-fragment-index="3">What is a priority?</h4>
                     <small class="fragment" data-fragment-index="4">ARMv7m reference manual</small>
                     <blockquote class="fragment" data-fragment-index="4" cite="ARMv7m Reference Manual" style="margin-top:-0.3em">
-                        NVIC Interrupts are prioritized by updating an 8-bit field within a 32-bit register. (Each register supporting 4 interrupts). [...] maintained according to the ARMv7m prioritization scheme
+                        NVIC Interrupts are prioritized by updating an 8-bit field within a 32-bit register. (Each register supporting 4 interrupts).
                     </blockquote>
                     <small class="fragment" data-fragment-index="5">Cortex M4 technical reference manual</small>
                     <blockquote class="fragment" data-fragment-index="5" cite="ARMv7m Reference Manual" style="margin-top:-0.3em">
@@ -511,7 +511,7 @@ Reveal.initialize({
 
     transition: 'convex', // none/fade/slide/convex/concave/zoom
 
-        // Optional reveal.js plugins
+    // Optional reveal.js plugins
     dependencies: [
     { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
     { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
@@ -521,7 +521,6 @@ Reveal.initialize({
             { src: 'plugin/notes/notes.js', async: true }
     ]
 });
-
         </script>
 
     </body>
