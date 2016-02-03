@@ -98,10 +98,48 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                     <br>
                     <div class="fragment" data-fragment-index="3">
                         <b>Miniscule overhead</b> <br>
-                        Component-based construction means that the overhead of using this RTOS is kept at a minimum. How? 2 stages.<br>
+                        Component-based construction means that the overhead of using this RTOS is kept at a minimum. How? 2 stages. (later)<br>
                     </div>
                     <br>
                     <small class="fragment" data-fragment-index="2">*model-checking for adherence to our specification without unintended side-effects (abstract, not code-level). 'Progress' proofs would be even nicer, perhaps a future project</small>
+
+                </section>
+
+                <section data-background="#000000">
+                        <h2>Intended for μcontrollers <br></h2>
+                        <div class="fragment">Tiny amounts of RAM. Talking KB, not GB!</div>
+                        <div class="fragment"><h1>Supported platforms</h1></div>
+                </section>
+
+                <section data-background="#000000">
+                    <h2>ARMv7m</h2>
+                    <h3 class="fragment" data-fragment-index="1">Cortex-M3 to Cortex-M7</h3>
+                    <div class="fragment" data-fragment-index="2">Funky hardware...</div>
+                    <br>
+                    <ul>
+                        <li class="fragment" data-fragment-index="3"><b>EFM32TG110</b> - 32 MHz, 32K RAM, ~$2.00 (Cortex-M3)</li>
+                        <li class="fragment" data-fragment-index="4"><b>ATSAMS70</b> - 300 MHz, 2MB RAM, ~$20.00 (Cortex-M7)</li>
+                    </ul>
+                    <br>
+                    <br>
+                    <div id="wrap">
+                        <div id="left_col" class="fragment" data-fragment-index="3">
+                            <img src="images/small_chip.jpg"/>
+                        </div>
+                        <div id="right_col" class="fragment" data-fragment-index="4">
+                            <img src="images/big_chip.jpg"/>
+                        </div>
+                    </div>
+                    <small class="fragment">Of course, devboards...</small>
+                </section>
+
+                <section data-background="#000000">
+                    <h2>Platforms & platforms</h2>
+                    <h3 class="fragment">• PowerPC</h3>
+                    <h4 class="fragment">• Proprietary 8051</h4>
+                    <h3 class="fragment">• 32-bit x86 (POSIX) user-space</h3>
+                    <div class="fragment">Allows testing eChronos applications natively under Linux!</div>
+                    <img class="fragment" src="images/usp_pic.png" style="border:0; background:none;"/>
                 </section>
 
                 <section data-background="#000000">
