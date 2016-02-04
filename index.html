@@ -106,9 +106,91 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 </section>
 
                 <section data-background="#000000">
+                        <h2>eChronos variants</h2>
+                        <table>
+                            <tr>
+                                <td><em>Variant</em></td>
+                                <td><em>Scheduler</em></td>
+                                <td><em>Mutexes & Semaphores</em></td>
+                                <td><em>Signals & Interrupts</em></td>
+                                <td><em>Timers</em></td>
+                            </tr>
+
+                            <tr class="fragment">
+                                <td><b>Acamar</b></td>
+                                <td>Explicit</td>
+                                <td>No</td>
+                                <td>No</td>
+                                <td>No</td>
+                            </tr>
+
+                            <tr class="fragment">
+                                <td><b>Gatria</b></td>
+                                <td>Round-robin</td>
+                                <td>Yes</td>
+                                <td>No</td>
+                                <td>No</td>
+                            </tr>
+
+                            <tr class="fragment">
+                                <td><b>Kraz</b></td>
+                                <td>Round-robin</td>
+                                <td>Yes</td>
+                                <td>Signal-only</td>
+                                <td>No</td>
+                            </tr>
+
+                            <tr class="fragment">
+                                <td><b>Acrux</b></td>
+                                <td>Round-robin</td>
+                                <td>Yes</td>
+                                <td>Interrupt-only</td>
+                                <td>No</td>
+                            </tr>
+
+                            <tr class="fragment">
+                                <td><a><b>→ Rigel</b></a></td>
+                                <td>Round-robin</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                            </tr>
+
+                            <tr class="fragment">
+                                <td><b>Kochab</b></td>
+                                <td>Priority</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                            </tr>
+
+                            <tr class="fragment">
+                                <td><b>Phact</b></td>
+                                <td>Priority (Ceil)</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                            </tr>
+                        </table>
+                        <div class="fragment">Rigel API docs: <a>github.com/echronos/echronos/wiki/Manuals/rigel-x86-posix.pdf</a></div>
+                </section>
+
+                <section data-background="#000000">
                         <h2>Intended for μcontrollers <br></h2>
                         <div class="fragment">Tiny amounts of RAM. Talking KB, not GB!</div>
-                        <div class="fragment"><h1>Supported platforms</h1></div>
+                        <br>
+                        <b class="fragment">Trade-offs...</b>
+                        <br>
+                        <ul>
+                            <li class="fragment">No MMU or multicore support</li>
+                            <li class="fragment">No POSIX API</li>
+                            <li class="fragment">No dynamic memory management</li>
+                            <li class="fragment">No device drivers</li>
+                        </ul>
+                </section>
+
+                <section data-background="#000000">
+                    <h1>Supported platforms</h1>
                 </section>
 
                 <section data-background="#000000">
@@ -134,6 +216,15 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 </section>
 
                 <section data-background="#000000">
+                    <h2>Dev boards</h2>
+                    <img class="fragment" src="images/launchpad.jpg"/> &nbsp;&nbsp;&nbsp;
+                    <img class="fragment" src="images/evalbot.jpg"/> <br>
+                    <img class="fragment" src="images/discovery.jpg" style="width:320px"/>
+                    <br>
+                    <small class="fragment">TI Connected Launchpad, TI Evalbot, STM32F4 Discovery</small>
+                </section>
+
+                <section data-background="#000000">
                     <h2>Platforms & platforms</h2>
                     <h3 class="fragment">• PowerPC</h3>
                     <h4 class="fragment">• Proprietary 8051</h4>
@@ -143,7 +234,12 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                 </section>
 
                 <section data-background="#000000">
-                    <h1>RTOS Customization</h2>
+                    <h1>RTOS Customisation</h2>
+                </section>
+
+                <section data-background="#000000">
+                    <h2>How it fits together...</h2>
+                    <img src="images/customization.png" style="border:0; background:none;"/>
                 </section>
 
                 <section data-background="#000000" data-transition="convex-in fade-out">
@@ -176,6 +272,7 @@ Component('sched-rr', {'assume_runnable': False}),
 Component('simple-mutex'),
 Component('task'),
                     </code></pre>
+                    <div class="fragment">Have a look at <a>x.py</a> from line 163 onward</div>
                     <div class="fragment">Normally, you don't need to create your own. <br></div>
                     <div class="fragment">What about the OS documentation? <em>It's generated, too!</em></div>
                 </section>
@@ -247,6 +344,7 @@ Component('task'),
     &lt;name&gt;lwip_aux_sem_1&lt;/name&gt;
 &lt;/semaphore&gt;
                         </code></pre>
+                    <div class="fragment">Have a look at <a>echronos/packages/lca2016/rigel.prx</a></div>
                 </section>
 
             </div>
